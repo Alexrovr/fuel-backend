@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{ template "heat_head" . }}
+</head>
+<body class="heat-body">
+<div class="heat-phone">
+    {{ template "heat_topbar" . }}
+
+    <main class="heat-screen heat-screen--scroll">
+        {{ if .HasDraft }}
+        {{ with .HeatCard }}
+        <p class="heat-draft__status">Черновик карточки топлива — статус «{{ .FuelStatus }}»</p>
+
+        <form class="heat-form">
+            <fieldset class="heat-fieldset">
+                <legend class="heat-fieldset__legend">Изображение топлива</legend>
+                <img class="heat-form__preview" src="{{ .ImageURL }}" alt="{{ .FuelName }}">
+                <label class="heat-field__label" for="image_key">Ключ объекта в Minio</label>
+                <input class="heat-field__input" type="text" id="image_key" name="image_key" value="{{ .ImageKey }}">
+                <p class="heat-field__hint">{{ .ImageURL }}</p>
+            </fieldset>
+
+            <fieldset class="heat-fieldset">
+                <legend class="heat-fieldset__legend">Видео горения</legend>
+                <video class="heat-form__preview"
+                       poster="{{ .ImageURL }}"
+                       src="{{ .VideoURL }}"
+                       autoplay muted loop playsinline preload="auto"></video>
+                <label class="heat-field__label" for="video_key">Ключ объекта в Minio</label>
+                <input class="heat-field__input" type="text" id="video_key" name="video_key" value="{{ .VideoKey }}">
+                <p class="heat-field__hint">{{ .VideoURL }}</p>
+            </fieldset>
+
+            <fieldset class="heat-fieldset">
+                <legend class="heat-fieldset__legend">Описание реакции горения</legend>
+                <label class="heat-field__label" for="fuel_name">Название топлива</label>
+                <input class="heat-field__input" type="text" id="fuel_name" name="fuel_name" value="{{ .FuelName }}">
+
+                <label class="heat-field__label" for="chemical_formula">Химическая формула</label>
+                <input class="heat-field__input" type="text" id="chemical_formula" name="chemical_formula" value="{{ .ChemicalFormula }}">
+
+                <label class="heat-field__label" for="combustion_note">Краткое описание</label>
+                <textarea class="heat-field__input heat-field__input--area" id="combustion_note" name="combustion_note" rows="6">{{ .CombustionNote }}</textarea>
+            </fieldset>
+
+            <fieldset class="heat-fieldset">
+                <legend class="heat-fieldset__legend">Теплотехнические характеристики</legend>
+
+                <label class="heat-field__label" for="heat_of_combustion_kj">Теплота сгорания при н.у., кДж/м&sup3;</label>
+                <input class="heat-field__input" type="text" inputmode="numeric" id="heat_of_combustion_kj" name="heat_of_combustion_kj" value="{{ .HeatOfCombustionKJ }}">
+
+                <label class="heat-field__label" for="ignition_temp_c">Температура воспламенения, &deg;C</label>
+                <input class="heat-field__input" type="text" inputmode="numeric" id="ignition_temp_c" name="ignition_temp_c" value="{{ .IgnitionTempC }}">
+
+                <label class="heat-field__label" for="flame_temp_c">Температура пламени, &deg;C</label>
+                <input class="heat-field__input" type="text" inputmode="numeric" id="flame_temp_c" name="flame_temp_c" value="{{ .FlameTempC }}">
+
+                <label class="heat-field__label" for="air_demand_m3">Расход воздуха, м&sup3; на 1 м&sup3; топлива</label>
+                <input class="heat-field__input" type="text" inputmode="decimal" id="air_demand_m3" name="air_demand_m3" value="{{ printf "%.2f" .AirDemandM3 }}">
+            </fieldset>
+
+            <p class="heat-form__note">
+                В первой лабораторной работе сохранение карточек не реализуется:
+                поля черновика можно заполнить, но коллекция не изменяется.
+            </p>
+            <button class="heat-button heat-button--wide" type="button" disabled>Опубликовать</button>
+        </form>
+        {{ end }}
+        {{ else }}
+        <p class="heat-grid__empty">В коллекции нет карточки топлива в статусе «черновик».</p>
+        {{ end }}
+    </main>
+
+    {{ template "heat_tabbar" . }}
+</div>
+</body>
+</html>

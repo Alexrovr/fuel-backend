@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{ template "heat_head" . }}
+</head>
+<body class="heat-body">
+<div class="heat-phone">
+    {{ template "heat_topbar" . }}
+
+    <main class="heat-screen heat-screen--scroll">
+        <form class="heat-filter" method="get" action="/fuel_grid">
+            <label class="heat-filter__label" for="min_heat">Теплота сгорания не менее, кДж/м&sup3;</label>
+            <div class="heat-filter__row">
+                <input class="heat-filter__input"
+                       type="text"
+                       inputmode="numeric"
+                       id="min_heat"
+                       name="min_heat"
+                       placeholder="например, 35000"
+                       value="{{ .MinHeatFilter }}">
+                <button class="heat-button heat-button--filter" type="submit">Найти</button>
+            </div>
+            {{ if .FilterErrorMsg }}
+            <p class="heat-filter__error">{{ .FilterErrorMsg }}</p>
+            {{ end }}
+        </form>
+
+        {{ if .HeatCards }}
+        <ul class="heat-grid">
+            {{ range .HeatCards }}
+            <li class="heat-grid__cell">
+                <a class="heat-card" href="/fuel_feed/{{ .FuelID }}">
+                    <img class="heat-card__image" src="{{ .ImageURL }}" alt="{{ .FuelName }}">
+                    <div class="heat-card__body">
+                        <h2 class="heat-card__name">{{ .FuelName }}</h2>
+                        <p class="heat-card__formula">{{ .ChemicalFormula }}</p>
+                        <p class="heat-card__heat">{{ .HeatOfCombustionKJ }} <span class="heat-card__unit">кДж/м&sup3;</span></p>
+                        <span class="heat-like heat-like--card">
+                            <span class="heat-like__icon">&#10084;</span>
+                            <span class="heat-like__count">{{ .LikesCount }}</span>
+                        </span>
+                    </div>
+                </a>
+            </li>
+            {{ end }}
+        </ul>
+        {{ else }}
+        <p class="heat-grid__empty">
+            Нет видов топлива с теплотой сгорания от {{ .MinHeatFilter }} кДж/м&sup3;.
+            Уменьшите значение фильтра.
+        </p>
+        {{ end }}
+    </main>
+
+    {{ template "heat_tabbar" . }}
+</div>
+</body>
+</html>

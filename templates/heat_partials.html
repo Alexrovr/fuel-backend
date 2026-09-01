@@ -1,0 +1,30 @@
+{{ define "heat_head" }}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ .PageTitle }} — Теплота сгорания</title>
+<link rel="stylesheet" href="/resources/css/style.css">
+{{ end }}
+
+{{ define "heat_topbar" }}
+<header class="heat-topbar">
+    <span class="heat-topbar__logo">ТЕПЛОТА<span class="heat-topbar__logo-accent">СГОРАНИЯ</span>.РФ</span>
+    <span class="heat-topbar__page">{{ .PageTitle }}</span>
+</header>
+{{ end }}
+
+{{ define "heat_tabbar" }}
+<nav class="heat-tabbar">
+    <a class="heat-tabbar__item{{ if eq .ActiveTab "feed" }} heat-tabbar__item--active{{ end }}" href="/fuel_feed">
+        <span class="heat-tabbar__icon">&#9654;</span>
+        <span class="heat-tabbar__label">Лента</span>
+    </a>
+    <a class="heat-tabbar__item{{ if eq .ActiveTab "draft" }} heat-tabbar__item--active{{ end }}" href="/fuel_draft">
+        <span class="heat-tabbar__icon">&#43;</span>
+        <span class="heat-tabbar__label">Добавление</span>
+    </a>
+    <a class="heat-tabbar__item{{ if eq .ActiveTab "grid" }} heat-tabbar__item--active{{ end }}" href="/fuel_grid">
+        <span class="heat-tabbar__icon">&#9638;</span>
+        <span class="heat-tabbar__label">Плитка</span>
+    </a>
+</nav>
+{{ end }}

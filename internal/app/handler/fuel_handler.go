@@ -12,8 +12,6 @@ import (
 	"heat-backend/internal/app/storage"
 )
 
-// FuelHandler — слой контроллеров. Обработчики обращаются к репозиторию,
-// репозиторий к обработчикам — никогда (однонаправленная зависимость).
 type FuelHandler struct {
 	repository *repository.FuelRepository
 	media      *storage.MinioMedia
@@ -32,9 +30,7 @@ func NewFuelHandler(
 	}
 }
 
-// toCardView переносит карточку из коллекции в модель представления:
-// здесь, в контроллере-обработчике, вычисляется количество лайков
-// и по ключам Minio собираются url изображения и видео.
+// toCardView превращает сущность топлива в форму для шаблонов.
 func (h *FuelHandler) toCardView(fuel models.Fuel) models.HeatCardView {
 	return models.HeatCardView{
 		FuelID:             fuel.FuelID,

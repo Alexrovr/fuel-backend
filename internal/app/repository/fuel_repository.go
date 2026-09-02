@@ -6,21 +6,13 @@ import (
 	"heat-backend/internal/app/models"
 )
 
-// ErrFuelNotFound возвращается, когда карточка топлива отсутствует в коллекции
-// или скрыта от интерфейса статусом «удален».
 var ErrFuelNotFound = errors.New("вид топлива не найден")
-
-// ErrDraftNotFound возвращается, когда у пользователя нет карточки-черновика.
 var ErrDraftNotFound = errors.New("черновик карточки топлива не найден")
 
-// FuelRepository — слой доступа к данным. В первой лабораторной база данных
-// не используется: единственная модель-коллекция хранится в памяти процесса.
 type FuelRepository struct {
 	fuels []models.Fuel
 }
 
-// NewFuelRepository наполняет коллекцию реальными справочными данными
-// по теплоте сгорания газообразных топлив при нормальных условиях.
 func NewFuelRepository() *FuelRepository {
 	return &FuelRepository{
 		fuels: []models.Fuel{
@@ -37,7 +29,7 @@ func NewFuelRepository() *FuelRepository {
 				IgnitionTempC:      537,
 				FlameTempC:         1957,
 				AirDemandM3:        9.52,
-				ImageKey:           "methane.jpg",
+				ImageKey:           "metan.jpg",
 				VideoKey:           "methane.mp4",
 				FuelStatus:         models.FuelStatusPublished,
 				LikedByUserIDs:     []int{1, 2, 3, 5, 8, 13, 21},
@@ -55,7 +47,7 @@ func NewFuelRepository() *FuelRepository {
 				IgnitionTempC:      470,
 				FlameTempC:         1970,
 				AirDemandM3:        27.37,
-				ImageKey:           "propane_butane.jpg",
+				ImageKey:           "propan-bytan.jpg",
 				VideoKey:           "propane_butane.mp4",
 				FuelStatus:         models.FuelStatusPublished,
 				LikedByUserIDs:     []int{2, 4, 7, 9, 11, 14, 16, 19, 23},
@@ -73,7 +65,7 @@ func NewFuelRepository() *FuelRepository {
 				IgnitionTempC:      335,
 				FlameTempC:         3150,
 				AirDemandM3:        11.91,
-				ImageKey:           "acetylene.jpg",
+				ImageKey:           "acetilen.png",
 				VideoKey:           "acetylene.mp4",
 				FuelStatus:         models.FuelStatusPublished,
 				LikedByUserIDs:     []int{1, 6, 10, 12, 18},
@@ -91,30 +83,13 @@ func NewFuelRepository() *FuelRepository {
 				IgnitionTempC:      510,
 				FlameTempC:         2130,
 				AirDemandM3:        2.38,
-				ImageKey:           "hydrogen.jpg",
+				ImageKey:           "vodorod.jpg",
 				VideoKey:           "hydrogen.mp4",
 				FuelStatus:         models.FuelStatusPublished,
 				LikedByUserIDs:     []int{3, 5, 15},
 			},
 			{
 				FuelID:          5,
-				FuelName:        "Бутан",
-				ChemicalFormula: "C4H10",
-				CombustionNote: "Чистый бутан выведен из подборки: при температуре ниже нуля он " +
-					"перестаёт испаряться из баллона, поэтому в справочнике оставлена только " +
-					"пропан-бутановая смесь. Карточка помечена статусом «удален» и в интерфейсе " +
-					"не отображается.",
-				HeatOfCombustionKJ: 123770,
-				IgnitionTempC:      405,
-				FlameTempC:         1970,
-				AirDemandM3:        30.94,
-				ImageKey:           "butane.jpg",
-				VideoKey:           "butane.mp4",
-				FuelStatus:         models.FuelStatusDeleted,
-				LikedByUserIDs:     []int{4},
-			},
-			{
-				FuelID:          6,
 				FuelName:        "Метано-водородная смесь",
 				ChemicalFormula: "CH4 + H2",
 				CombustionNote: "Черновик карточки: смесь природного газа с 20 % водорода, которую " +
@@ -125,8 +100,8 @@ func NewFuelRepository() *FuelRepository {
 				IgnitionTempC:      520,
 				FlameTempC:         2000,
 				AirDemandM3:        8.09,
-				ImageKey:           "methane_hydrogen.jpg",
-				VideoKey:           "methane_hydrogen.mp4",
+				ImageKey:           "metan.jpg",
+				VideoKey:           "methane.mp4",
 				FuelStatus:         models.FuelStatusDraft,
 				LikedByUserIDs:     []int{},
 			},
@@ -134,9 +109,6 @@ func NewFuelRepository() *FuelRepository {
 	}
 }
 
-// GetPublishedFuels возвращает опубликованные карточки топлива.
-// Фильтрация по теме выполняется на сервере: minHeatKJ — нижняя граница
-// теплоты сгорания в кДж/м³ при н.у. Значение 0 означает «без фильтра».
 func (r *FuelRepository) GetPublishedFuels(minHeatKJ int) []models.Fuel {
 	result := make([]models.Fuel, 0, len(r.fuels))
 	for _, fuel := range r.fuels {
@@ -151,7 +123,6 @@ func (r *FuelRepository) GetPublishedFuels(minHeatKJ int) []models.Fuel {
 	return result
 }
 
-// GetPublishedFuelByID отдаёт одну опубликованную карточку по идентификатору.
 func (r *FuelRepository) GetPublishedFuelByID(fuelID int) (models.Fuel, error) {
 	for _, fuel := range r.fuels {
 		if fuel.FuelID == fuelID && fuel.FuelStatus == models.FuelStatusPublished {
@@ -161,8 +132,6 @@ func (r *FuelRepository) GetPublishedFuelByID(fuelID int) (models.Fuel, error) {
 	return models.Fuel{}, ErrFuelNotFound
 }
 
-// GetNextPublishedFuel возвращает следующую опубликованную карточку после
-// указанной. Список закольцован: после последней карточки идёт первая.
 func (r *FuelRepository) GetNextPublishedFuel(fuelID int) (models.Fuel, error) {
 	published := r.GetPublishedFuels(0)
 	if len(published) == 0 {
@@ -176,8 +145,6 @@ func (r *FuelRepository) GetNextPublishedFuel(fuelID int) (models.Fuel, error) {
 	return models.Fuel{}, ErrFuelNotFound
 }
 
-// GetFirstPublishedFuel нужен ленте, открытой из панели вкладок,
-// когда идентификатор карточки в url не указан.
 func (r *FuelRepository) GetFirstPublishedFuel() (models.Fuel, error) {
 	published := r.GetPublishedFuels(0)
 	if len(published) == 0 {
@@ -186,8 +153,6 @@ func (r *FuelRepository) GetFirstPublishedFuel() (models.Fuel, error) {
 	return published[0], nil
 }
 
-// GetDraftFuel отдаёт единственную карточку в статусе «черновик»,
-// которая отображается на странице добавления.
 func (r *FuelRepository) GetDraftFuel() (models.Fuel, error) {
 	for _, fuel := range r.fuels {
 		if fuel.FuelStatus == models.FuelStatusDraft {

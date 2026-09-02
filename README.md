@@ -67,21 +67,11 @@ go run ./cmd/heat_backend
 | `MINIO_PUBLIC_ENDPOINT` | `http://localhost:9000` | адрес Minio, из которого собираются url медиа |
 | `MINIO_BUCKET` | `heat-fuel-media` | имя бакета |
 
-### 2.3. Перегенерировать изображения и видео (необязательно)
+### 2.3. Медиафайлы
 
-Медиафайлы в `resources/media` сгенерированы процедурно: для каждого топлива
-рисуется пламя своего цвета. Пересобрать их можно так:
-
-```bash
-go run ./scripts/gen_media
-```
-
-Команда кладёт постеры `.jpg` в `resources/media` и кадры роликов в
-`build/frames/<ключ>/`. Ролики собираются из кадров через ffmpeg:
-
-```bash
-docker run --rm -v "$PWD:/w" -w /w jrottenberg/ffmpeg:6-alpine -y -framerate 24 -stream_loop 2 -i build/frames/methane/f_%03d.png -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart -an resources/media/methane.mp4
-```
+Все изображения и видео подгружаются только из MinIO через публичный URL объекта.
+Локальные файлы в проекте больше не используются: сервер не отдаёт статические
+файлы из `resources`, а загрузка контента производится в бакет MinIO отдельно.
 
 ---
 
@@ -99,7 +89,6 @@ internal/app/storage/minio_media.go   сборка url объектов Minio п
 templates/                            шаблоны трёх страниц + общие блоки
 resources/css/style.css               стили приложения, вынесены в отдельный файл
 resources/media/                      изображения и видео, заливаются в Minio
-scripts/gen_media/                    генератор медиафайлов
 docker-compose.yml                    развёртывание Minio
 ```
 

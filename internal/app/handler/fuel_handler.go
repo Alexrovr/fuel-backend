@@ -107,11 +107,7 @@ func (h *FuelHandler) renderFeedError(ctx *gin.Context, status int, message stri
 	})
 }
 
-// GetFuelDraft — GET /fuel_draft
-//
-// Страница добавления карточки топлива. В первой лабораторной сохранение
-// не реализуется: форма только показывает поля единственного черновика
-// из коллекции, разнесённые по отдельным блокам.
+
 func (h *FuelHandler) GetFuelDraft(ctx *gin.Context) {
 	draft, err := h.repository.GetDraftFuel()
 	if err != nil {
@@ -132,11 +128,6 @@ func (h *FuelHandler) GetFuelDraft(ctx *gin.Context) {
 	})
 }
 
-// GetFuelGrid — GET /fuel_grid?min_heat=...
-//
-// Плитка карточек топлива в два столбца. Фильтрация по теме выполняется
-// на сервере по числовому полю «теплота сгорания, кДж/м³ при н.у.»,
-// введённое значение возвращается в шаблон и остаётся в поле ввода.
 func (h *FuelHandler) GetFuelGrid(ctx *gin.Context) {
 	minHeatQuery := ctx.Query("min_heat")
 
